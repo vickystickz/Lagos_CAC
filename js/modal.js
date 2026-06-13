@@ -172,22 +172,33 @@ function _renderChangeChart() {
   const container = document.getElementById("change-chart-container");
   if (!container) return;
 
-  if (!_statsCache?.[2020] || !_statsCache?.[2025]) {
+  if (!_statsCache?.before || !_statsCache?.after) {
     container.innerHTML = `<p class="modal-empty">Load both classification layers first to view change analysis.</p>`;
     return;
   }
 
-  const s20     = _statsCache[2020];
-  const s25     = _statsCache[2025];
-  const classes = Object.keys(PALETTE);
+  const sBefore     = _statsCache.before;
+  const sAfter      = _statsCache.after;
+  const yearBefore  = _statsCache.yearBefore ?? "Left";
+  const yearAfter   = _statsCache.yearAfter  ?? "Right";
+  const classes     = Object.keys(PALETTE);
+
+  // Update modal title and legend to reflect actual selected years
+  const modalTitle = document.querySelector("#modal-change .modal-title");
+  if (modalTitle) modalTitle.textContent = `Land Cover Change (${yearBefore} → ${yearAfter})`;
+
+  const legBefore = document.getElementById("change-leg-before");
+  const legAfter  = document.getElementById("change-leg-after");
+  if (legBefore) legBefore.textContent = `${yearBefore} (Left)`;
+  if (legAfter)  legAfter.textContent  = `${yearAfter} (Right)`;
 
   let html = `<div class="cc-chart">`;
 
   classes.forEach(cls => {
     const entry  = PALETTE[cls];
-    const pct20  = parseFloat(s20[cls]?.pct || 0);
-    const pct25  = parseFloat(s25[cls]?.pct || 0);
-    const delta  = pct25 - pct20;
+    const pct1   = parseFloat(sBefore[cls]?.pct || 0);
+    const pct2   = parseFloat(sAfter[cls]?.pct  || 0);
+    const delta  = pct2 - pct1;
     const sign   = delta >= 0 ? "+" : "";
     const dClass = delta >= 0 ? "cc-gain" : "cc-loss";
 
@@ -198,18 +209,18 @@ function _renderChangeChart() {
       </div>
       <div class="cc-row-bars">
         <div class="cc-bar-line">
-          <span class="cc-year-tag y20">2020</span>
+          <span class="cc-year-tag y20">${yearBefore}</span>
           <div class="cc-bar-track">
-            <div class="cc-bar y20" style="width:${Math.min(pct20, 100)}%"></div>
+            <div class="cc-bar y20" style="width:${Math.min(pct1, 100)}%"></div>
           </div>
-          <span class="cc-bar-pct">${pct20.toFixed(1)}%</span>
+          <span class="cc-bar-pct">${pct1.toFixed(1)}%</span>
         </div>
         <div class="cc-bar-line">
-          <span class="cc-year-tag y25">2025</span>
+          <span class="cc-year-tag y25">${yearAfter}</span>
           <div class="cc-bar-track">
-            <div class="cc-bar y25" style="width:${Math.min(pct25, 100)}%"></div>
+            <div class="cc-bar y25" style="width:${Math.min(pct2, 100)}%"></div>
           </div>
-          <span class="cc-bar-pct">${pct25.toFixed(1)}%</span>
+          <span class="cc-bar-pct">${pct2.toFixed(1)}%</span>
         </div>
       </div>
       <div class="cc-delta ${dClass}">${sign}${delta.toFixed(1)}%</div>

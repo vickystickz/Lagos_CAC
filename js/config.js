@@ -8,11 +8,16 @@
  *   - A local dev server serving the file with CORS enabled
  */
 
-// ─── COG source URLs ──────────────────────────────────────────────────────────
-// Local files served from the data/ folder (relative to index.html).
-// These are COGs already projected to EPSG:4326 (WGS84).
-export const COG_2020_URL = "./data/LCC_2020_cog_4326.tif";
-export const COG_2025_URL = "./data/LCC_2025_cog_4326.tif";
+// ─── Years registry ───────────────────────────────────────────────────────────
+// Add future years here — the UI selectors populate from this object.
+export const YEARS = {
+  2020: { label: "2020", url: "./data/LCC_2020_cog_4326.tif" },
+  2025: { label: "2025", url: "./data/LCC_2025_cog_4326.tif" },
+};
+
+// Default year assignment for each map side
+export const DEFAULT_YEAR_BEFORE = 2020;
+export const DEFAULT_YEAR_AFTER  = 2025;
 
 // ─── Classification palette ──────────────────────────────────────────────────
 export const PALETTE = {
@@ -79,11 +84,11 @@ export const BASEMAPS = {
 export const RASTER_OPACITY   = 0.88;
 export const RASTER_FADE_MS   = 400;
 
-// ─── Source / layer ID prefixes ───────────────────────────────────────────────
-export const SRC_2020  = "cog-2020";
-export const LYR_2020  = "cog-2020-layer";
-export const SRC_2025  = "cog-2025";
-export const LYR_2025  = "cog-2025-layer";
+// ─── Source / layer IDs (side-based, not year-based) ─────────────────────────
+export const SRC_BEFORE = "cog-before";
+export const LYR_BEFORE = "cog-before-layer";
+export const SRC_AFTER  = "cog-after";
+export const LYR_AFTER  = "cog-after-layer";
 
 // ─── Utility: parse hex colour → { r, g, b } ─────────────────────────────────
 export function hexToRgb(hex) {

@@ -34,7 +34,7 @@ async function main() {
   initSwipe();
 
   // 5. Register stats callback before loading rasters
-  onStatsReady((year, stats) => updateStats(year, stats));
+  onStatsReady((side, year, stats) => updateStats(side, year, stats));
 
   // 6. Wait for both maps to finish their initial style load, then add rasters
   await Promise.all([
