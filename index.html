@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Lagos Coastal Change Monitor</title>
+  <meta name="description" content="Interactive before/after comparison of classified coastal land-cover for Lagos, Nigeria (2020 vs 2025)" />
+
+  <!-- MapLibre GL CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
+
+  <!-- Google Fonts: Geist + Inter (matches Figma design tokens) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     Loading overlay (shown until both maps load)
+══════════════════════════════════════════════════ -->
+<div id="loading-overlay">
+  <div class="loading-content">
+    <div class="nav-logo-icon" style="width:40px;height:40px;border-radius:10px;">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px;color:#fff">
+        <path d="M2 13C5 13 8 11 11 9C13 7.5 14 6 14 4C14 2.9 13.5 2 12.5 2C11.5 2 10.5 3 10 4.5L9 7L7 9L5 10.5L3 11.5L2 13Z" fill="currentColor" opacity="0.8"/>
+        <circle cx="8" cy="8" r="2" fill="white"/>
+      </svg>
+    </div>
+    <div class="loading-logo">Lagos Coastal Monitor</div>
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Initialising map…</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     Main app shell
+══════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- ── Top navigation bar ──────────────────── -->
+  <nav id="navbar" aria-label="Main navigation">
+
+    <!-- Logo -->
+    <a class="nav-logo" href="#" aria-label="Lagos Coastal Monitor home">
+      <div class="nav-logo-icon">
+        <!-- Coastline / wave icon -->
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 11C4 11 5 9 7 9C9 9 10 11 12 11C13.5 11 14.5 10 15 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M1 7C3 7 4 5 6 5C8 5 9 7 11 7C12.5 7 13.5 6 14 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="nav-logo-text">
+        <strong>Coastal Monitor</strong>
+        <span>Lagos, Nigeria</span>
+      </div>
+    </a>
+
+    <!-- Year labels -->
+    <div class="nav-year-pill year-2020">
+      <span class="dot"></span>
+      <span>2020 Baseline</span>
+    </div>
+    <div class="nav-year-pill year-2025">
+      <span class="dot"></span>
+      <span>2025 Current</span>
+    </div>
+
+    <!-- Basemap selector -->
+    <div class="nav-basemap" role="group" aria-label="Basemap style">
+      <button data-basemap="light" class="active" aria-pressed="true">Light</button>
+      <button data-basemap="satellite" aria-pressed="false">Satellite</button>
+    </div>
+
+    <!-- Spacer -->
+    <div class="nav-spacer" aria-hidden="true"></div>
+
+    <!-- Action buttons -->
+    <div class="nav-actions">
+      <button class="btn-nav" id="btn-zoom-lagos" title="Zoom to Lagos study area">
+        <!-- Target / zoom icon -->
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 1V3M8 13V15M1 8H3M13 8H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
+        </svg>
+        <span>Lagos</span>
+      </button>
+
+      <button class="btn-nav active" id="btn-toggle-legend" title="Toggle legend">
+        <!-- Legend / layers icon -->
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="4" width="5" height="5" rx="1" fill="currentColor" opacity="0.6"/>
+          <rect x="9" y="4" width="5" height="5" rx="1" fill="currentColor" opacity="0.4"/>
+          <rect x="2" y="10" width="5" height="2.5" rx="1" fill="currentColor" opacity="0.3"/>
+          <rect x="9" y="10" width="5" height="2.5" rx="1" fill="currentColor" opacity="0.2"/>
+        </svg>
+        <span>Legend</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Map comparison area ─────────────────── -->
+  <div id="comparison-wrapper" role="main" aria-label="Coastal change comparison map">
+
+    <!-- 2020 classification (bottom, full-width) -->
+    <div id="map-before" aria-label="2020 coastal classification map"></div>
+
+    <!-- 2025 classification (top, clipped from left by swipe handle) -->
+    <div id="map-after" aria-label="2025 coastal classification map"></div>
+
+    <!-- ── Swipe divider ────────────────────── -->
+    <div id="swipe-handle" aria-label="Swipe to compare years" role="slider"
+         aria-valuemin="5" aria-valuemax="95" aria-valuenow="50">
+      <div id="swipe-line" aria-hidden="true"></div>
+      <div id="swipe-btn" aria-hidden="true">
+        <!-- Double arrow / swap icon -->
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 8L2 10L6 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 8L18 10L14 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2 10H18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Year labels on the map surface -->
+    <div id="label-before" class="swipe-year-label" aria-hidden="true">◀ 2020</div>
+    <div id="label-after"  class="swipe-year-label" aria-hidden="true">2025 ▶</div>
+
+  </div>
+
+  <!-- ── Floating legend ─────────────────────── -->
+  <aside id="legend" aria-label="Classification legend">
+    <div id="legend-title">Classification</div>
+    <div id="legend-items"></div>
+  </aside>
+
+  <!-- ── Right sidebar ───────────────────────── -->
+  <aside id="sidebar" aria-label="Controls and statistics">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Coastal Change Analysis</div>
+      <button id="btn-sidebar-close" class="sidebar-close-btn" title="Hide panel" aria-label="Hide panel">
+        <!-- Chevron-left: slides panel to the left -->
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="sidebar-tabs" role="tablist">
+        <button class="sidebar-tab" data-tab="layers" role="tab" aria-selected="false">Layers</button>
+        <button class="sidebar-tab" data-tab="stats-2020" role="tab" aria-selected="false">2020</button>
+        <button class="sidebar-tab" data-tab="stats-2025" role="tab" aria-selected="false">2025</button>
+        <button class="sidebar-tab active" data-tab="change" role="tab" aria-selected="true">Change</button>
+      </div>
+    </div>
+
+    <!-- Layers tab -->
+    <div class="sidebar-panel" data-panel="layers" role="tabpanel" hidden>
+
+      <div class="panel-section-label">Layer Visibility</div>
+
+      <div class="layer-toggle-row">
+        <label for="toggle-2020">
+          <span class="layer-dot" style="background:#5a9fd4"></span>
+          2020 Classification
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-2020" checked />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <div class="layer-toggle-row">
+        <label for="toggle-2025">
+          <span class="layer-dot" style="background:#081b99"></span>
+          2025 Classification
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-2025" checked />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+
+      <!-- Loading indicators -->
+      <div id="loading-2020" aria-live="polite">
+        <span class="mini-spinner"></span> Loading 2020 layer…
+      </div>
+      <div id="loading-2025" aria-live="polite">
+        <span class="mini-spinner"></span> Loading 2025 layer…
+      </div>
+
+      <div class="panel-section-label" style="margin-top:18px">Actions</div>
+
+      <button class="btn-panel" id="btn-reset-swipe">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 3V1L5 4L8 7V5C10.76 5 13 7.24 13 10C13 12.76 10.76 15 8 15C5.24 15 3 12.76 3 10H1C1 13.866 4.134 17 8 17C11.866 17 15 13.866 15 10C15 6.134 11.866 3 8 3Z" fill="currentColor"/>
+        </svg>
+        Reset swipe to 50%
+      </button>
+
+      <button class="btn-panel" id="btn-zoom-lagos-panel">
+        <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 1V3M8 13V15M1 8H3M13 8H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
+        </svg>
+        Zoom to Lagos area
+      </button>
+    </div>
+
+    <!-- 2020 stats tab -->
+    <div class="sidebar-panel" data-panel="stats-2020" role="tabpanel" hidden>
+      <div class="panel-section-label">Land Cover — 2020</div>
+      <div id="stats-2020">
+        <div style="color:var(--text-tertiary);font-size:12px;padding:8px 0">
+          Loading classification data…
+        </div>
+      </div>
+    </div>
+
+    <!-- 2025 stats tab -->
+    <div class="sidebar-panel" data-panel="stats-2025" role="tabpanel" hidden>
+      <div class="panel-section-label">Land Cover — 2025</div>
+      <div id="stats-2025">
+        <div style="color:var(--text-tertiary);font-size:12px;padding:8px 0">
+          Loading classification data…
+        </div>
+      </div>
+    </div>
+
+    <!-- Change analysis tab (default visible) -->
+    <div class="sidebar-panel" data-panel="change" role="tabpanel">
+      <div class="panel-section-label">Class Change (2020 → 2025)</div>
+      <div id="stats-change">
+        <div style="color:var(--text-tertiary);font-size:12px;padding:8px 0">
+          Waiting for both layers to load…
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Floating button to reopen the sidebar when it's hidden -->
+  <button id="btn-sidebar-open" class="sidebar-open-btn" title="Show analysis panel" aria-label="Show analysis panel" hidden>
+    <!-- Chevron-right: reopens panel from the left -->
+    <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+</div><!-- #app -->
+
+<!-- ── Toast container ─────────────────────────── -->
+<div id="toast-container" aria-live="polite" role="status"></div>
+
+<!-- ══════════════════════════════════════════════
+     CDN dependencies
+     Order matters: MapLibre and GeoTIFF must be
+     available globally before app.js runs.
+══════════════════════════════════════════════════ -->
+
+<!-- MapLibre GL JS -->
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+
+<!-- geotiff.js v3 browser bundle – exposes global `GeoTIFF` -->
+<script src="https://cdn.jsdelivr.net/npm/geotiff@3.0.5/dist-browser/geotiff.js"></script>
+
+<!-- proj4.js – coordinate reprojection (used if COG is not in EPSG:4326) -->
+<script src="https://cdn.jsdelivr.net/npm/proj4@2.20.9/dist/proj4.js"></script>
+
+<!-- App entry point (ES module) -->
+<script type="module" src="js/app.js"></script>
+
+<!-- Sidebar panel: wire the duplicate "zoom to Lagos" button in panel -->
+<script type="module">
+  import { flyToLagos } from "./js/map.js";
+  document.getElementById("btn-zoom-lagos-panel")
+    ?.addEventListener("click", flyToLagos);
+</script>
+
+</body>
+</html>
