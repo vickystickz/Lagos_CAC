@@ -81,7 +81,6 @@ function _bindLayerToggles() {
 // ─── Action buttons ───────────────────────────────────────────────────────────
 function _bindActionButtons() {
   document.getElementById("btn-reset-swipe")?.addEventListener("click", resetSwipe);
-  document.getElementById("btn-zoom-lagos")?.addEventListener("click", flyToLagos);
   document.getElementById("btn-toggle-legend")?.addEventListener("click", _toggleLegend);
   document.getElementById("btn-legend-chevron")?.addEventListener("click", _collapseExpandLegend);
 }

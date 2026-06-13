@@ -40,8 +40,8 @@ export function initMaps() {
 
   // Navigation + scale only on the "before" map to avoid duplication
   mapBefore.addControl(new maplibregl.NavigationControl({ showCompass: true }), "top-right");
+  mapBefore.addControl(new _HomeControl(), "top-right");
   mapBefore.addControl(new maplibregl.ScaleControl({ unit: "metric" }), "bottom-left");
-  mapBefore.addControl(new maplibregl.FullscreenControl(), "top-right");
 
   // Attribution on both (legally required)
   mapBefore.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-right");
@@ -75,6 +75,34 @@ export function flyToLagos() {
   const [sw, ne] = MAP_CONFIG.fitBounds;
   mapBefore.fitBounds([sw, ne], { padding: 40, duration: 1200 });
   // mapAfter will follow via sync
+}
+
+// ─── Internal: home/reset control ────────────────────────────────────────────
+class _HomeControl {
+  onAdd(map) {
+    this._map = map;
+    this._container = document.createElement("div");
+    this._container.className = "maplibregl-ctrl maplibregl-ctrl-group";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.title = "Zoom to Lagos study area";
+    btn.setAttribute("aria-label", "Zoom to Lagos study area");
+    btn.innerHTML = `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+        style="width:18px;height:18px;display:block;margin:auto">
+      <path d="M3 9.5L10 3L17 9.5V17H13V13H7V17H3V9.5Z"
+            stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>`;
+    btn.addEventListener("click", flyToLagos);
+
+    this._container.appendChild(btn);
+    return this._container;
+  }
+
+  onRemove() {
+    this._container.parentNode?.removeChild(this._container);
+    this._map = undefined;
+  }
 }
 
 // ─── Internal: one-directional camera sync ────────────────────────────────────
