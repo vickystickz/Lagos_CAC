@@ -17,13 +17,15 @@ import { loadAllRasters, onStatsReady, reattachLayers } from "./raster.js";
 import { initSwipe } from "./swipe.js";
 import { initLegend } from "./legend.js";
 import { initControls, updateStats } from "./controls.js";
+import { initModals } from "./modal.js";
 
 async function main() {
   // 1. Legend (pure DOM, no map needed)
   initLegend();
 
-  // 2. Controls (wires buttons, tabs – no map state needed yet)
+  // 2. Controls + modals (pure DOM, no map state needed yet)
   initControls();
+  await initModals();
 
   // 3. Maps
   const { mapBefore, mapAfter } = initMaps();

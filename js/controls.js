@@ -12,6 +12,7 @@ import { setLayerVisible } from "./raster.js";
 import { setBasemap, flyToLagos, getMaps } from "./map.js";
 import { resetSwipe } from "./swipe.js";
 import { LYR_2020, LYR_2025, PALETTE } from "./config.js";
+import { setChangeStats } from "./modal.js";
 
 const state = {
   layer2020: true,
@@ -34,9 +35,10 @@ export function updateStats(year, stats) {
   state.stats[year] = stats;
   _renderStatsList(year, stats);
 
-  // If both years loaded, render the change analysis tab too
+  // If both years loaded, render change analysis and feed modal
   if (state.stats[2020] && state.stats[2025]) {
     _renderChangeAnalysis();
+    setChangeStats({ 2020: state.stats[2020], 2025: state.stats[2025] });
   }
 }
 
@@ -81,6 +83,7 @@ function _bindActionButtons() {
   document.getElementById("btn-reset-swipe")?.addEventListener("click", resetSwipe);
   document.getElementById("btn-zoom-lagos")?.addEventListener("click", flyToLagos);
   document.getElementById("btn-toggle-legend")?.addEventListener("click", _toggleLegend);
+  document.getElementById("btn-legend-chevron")?.addEventListener("click", _collapseExpandLegend);
 }
 
 // ─── Sidebar tabs ─────────────────────────────────────────────────────────────
@@ -97,13 +100,23 @@ function _bindSidebarTabs() {
   });
 }
 
-// ─── Legend visibility ────────────────────────────────────────────────────────
+// ─── Legend visibility (navbar button hides/shows the whole card) ─────────────
 function _toggleLegend() {
   const legend = document.getElementById("legend");
   if (!legend) return;
   legend.hidden = !legend.hidden;
   const btn = document.getElementById("btn-toggle-legend");
   if (btn) btn.classList.toggle("active", !legend.hidden);
+}
+
+// ─── Legend collapse (chevron expands/collapses the items) ───────────────────
+function _collapseExpandLegend() {
+  const legend  = document.getElementById("legend");
+  const chevron = document.getElementById("btn-legend-chevron");
+  if (!legend || !chevron) return;
+  const collapsed = legend.classList.toggle("legend-collapsed");
+  chevron.setAttribute("aria-expanded", String(!collapsed));
+  chevron.setAttribute("aria-label", collapsed ? "Expand legend" : "Collapse legend");
 }
 
 // ─── Sidebar collapse / expand ────────────────────────────────────────────────
