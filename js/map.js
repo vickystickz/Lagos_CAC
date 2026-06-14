@@ -1,8 +1,9 @@
 /**
  * map.js
- * Initialises and synchronises the two MapLibre GL instances:
- *   mapBefore  – renders the 2020 classification (always full-width beneath)
- *   mapAfter   – renders the 2025 classification (clipped on the right side)
+ * Initialises and synchronises the two MapLibre GL instances for Eti-Osa LGA
+ * coastal change monitoring:
+ *   mapBefore  – left map (full-width beneath), year selectable
+ *   mapAfter   – right map (clipped on the right side by swipe handle), year selectable
  *
  * Synchronisation is bi-directional but guarded by a `syncing` flag to
  * prevent event feedback loops.
@@ -86,8 +87,8 @@ class _HomeControl {
 
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.title = "Zoom to Lagos study area";
-    btn.setAttribute("aria-label", "Zoom to Lagos study area");
+    btn.title = "Zoom to Eti-Osa study area";
+    btn.setAttribute("aria-label", "Zoom to Eti-Osa study area");
     btn.innerHTML = `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
         style="width:18px;height:18px;display:block;margin:auto">
       <path d="M3 9.5L10 3L17 9.5V17H13V13H7V17H3V9.5Z"

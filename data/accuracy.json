@@ -1,8 +1,8 @@
 {
   "accuracy_assessment": {
     "2020": {
-      "overall_accuracy": 0.835,
-      "kappa": 0.787,
+      "overall_accuracy": 0.758,
+      "kappa": 0.655,
       "classes": [
         "Beach and Intertidal Zone",
         "Built-up",
@@ -11,31 +11,60 @@
         "Bare/Reclaimed Land"
       ],
       "confusion_matrix": [
-        [48, 5, 0, 0, 1],
-        [0, 23, 0, 0, 0],
-        [0, 0, 30, 0, 2],
-        [1, 1, 0, 12, 0],
-        [4, 6, 5, 2, 24]
+        [
+          24,
+          3,
+          0,
+          0,
+          3
+        ],
+        [
+          2,
+          25,
+          0,
+          0,
+          5
+        ],
+        [
+          0,
+          0,
+          3,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          0,
+          1,
+          0
+        ],
+        [
+          4,
+          3,
+          0,
+          1,
+          19
+        ]
       ],
       "producers_accuracy": {
-        "Beach and Intertidal Zone": 88.89,
-        "Built-up": 100.00,
-        "Vegetation": 93.75,
-        "Water": 85.71,
-        "Bare/Reclaimed Land": 58.54
+        "Beach and Intertidal Zone": 80.00,
+        "Built-up": 78.13,
+        "Vegetation": 75.00,
+        "Water": 50.00,
+        "Bare/Reclaimed Land": 70.37
       },
       "users_accuracy": {
-        "Beach and Intertidal Zone": 90.57,
-        "Built-up": 65.71,
-        "Vegetation": 85.71,
-        "Water": 85.71,
-        "Bare/Reclaimed Land": 88.89
+        "Beach and Intertidal Zone": 80.00,
+        "Built-up": 78.13,
+        "Vegetation": 100.00,
+        "Water": 50.00,
+        "Bare/Reclaimed Land": 67.86
       }
     },
-
     "2025": {
-      "overall_accuracy": 0.866,
-      "kappa": 0.824,
+      "overall_accuracy": 0.832,
+      "kappa": 0.758,
       "classes": [
         "Beach and Intertidal Zone",
         "Built-up",
@@ -44,25 +73,55 @@
         "Bare/Reclaimed Land"
       ],
       "confusion_matrix": [
-        [54, 0, 0, 0, 0],
-        [0, 23, 0, 0, 0],
-        [1, 1, 27, 0, 3],
-        [0, 0, 0, 13, 1],
-        [9, 3, 3, 1, 25]
+        [
+          27,
+          1,
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          30,
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          0,
+          2,
+          0,
+          2
+        ],
+        [
+          0,
+          1,
+          0,
+          1,
+          0
+        ],
+        [
+          2,
+          5,
+          1,
+          0,
+          19
+        ]
       ],
       "producers_accuracy": {
-        "Beach and Intertidal Zone": 100.0,
-        "Built-up": 100.0,
-        "Vegetation": 84.4,
-        "Water": 92.9,
-        "Bare/Reclaimed Land": 61.0
+        "Beach and Intertidal Zone": 90.00,
+        "Built-up": 93.75,
+        "Vegetation": 50.00,
+        "Water": 50.00,
+        "Bare/Reclaimed Land": 70.37
       },
       "users_accuracy": {
-        "Beach and Intertidal Zone": 84.4,
-        "Built-up": 85.2,
-        "Vegetation": 90.0,
-        "Water": 92.9,
-        "Bare/Reclaimed Land": 86.2
+        "Beach and Intertidal Zone": 93.10,
+        "Built-up": 81.08,
+        "Vegetation": 66.67,
+        "Water": 100.00,
+        "Bare/Reclaimed Land": 76.00
       }
     }
   }

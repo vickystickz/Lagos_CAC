@@ -30,14 +30,22 @@ export const PALETTE = {
 
 // ─── Map initial view ─────────────────────────────────────────────────────────
 export const MAP_CONFIG = {
-  center:    [3.45, 6.50],  // Lagos coastal study area [lng, lat]
-  zoom:      11,
-  minZoom:   9,             // prevent zooming out past regional scale
-  maxZoom:   18,
-  // Hard geographic limit: map cannot be panned or zoomed outside this box
-  maxBounds: [[2.50, 5.80], [4.80, 7.50]], // [SW, NE] — Lagos + buffer
-  // Bounding box for "Zoom to Lagos" control
-  fitBounds: [[3.20, 6.30], [3.70, 6.70]],
+  center: [3.52, 6.45], // Eti-Osa center
+  zoom: 12,
+  minZoom: 10,
+  maxZoom: 18,
+
+  // Restrict panning to Eti-Osa and immediate surroundings
+  maxBounds: [
+    [3.25, 6.30], // SW [lng, lat]
+    [3.75, 6.65]  // NE [lng, lat]
+  ],
+
+  // Used by "Zoom to Study Area" button
+  fitBounds: [
+    [3.35, 6.33],
+    [3.68, 6.58]
+  ]
 };
 
 // ─── Basemap styles ───────────────────────────────────────────────────────────

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Lagos Coastal Change Monitor</title>
-  <meta name="description" content="Interactive before/after comparison of classified coastal land-cover for Lagos, Nigeria (2020 vs 2025)" />
+  <title>Eti-Osa Coastal Change Monitor</title>
+  <meta name="description" content="Interactive before/after comparison of classified coastal land-cover for Eti-Osa LGA, Lagos — tracking sand-filling and land reclamation into built-up and recreational areas." />
 
   <!-- MapLibre GL CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
@@ -30,7 +30,7 @@
         <circle cx="8" cy="8" r="2" fill="white"/>
       </svg>
     </div>
-    <div class="loading-logo">Lagos Coastal Monitor</div>
+    <div class="loading-logo">Eti-Osa Coastal Monitor</div>
     <div class="loading-spinner"></div>
     <div class="loading-text">Initialising map…</div>
   </div>
@@ -45,7 +45,7 @@
   <nav id="navbar" aria-label="Main navigation">
 
     <!-- Logo -->
-    <a class="nav-logo" href="#" aria-label="Lagos Coastal Monitor home">
+    <a class="nav-logo" href="#" aria-label="Eti-Osa Coastal Monitor home">
       <div class="nav-logo-icon">
         <!-- Coastline / wave icon -->
         <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -54,8 +54,8 @@
         </svg>
       </div>
       <div class="nav-logo-text">
-        <strong>Coastal Monitor</strong>
-        <span>Lagos, Nigeria</span>
+        <strong>Eti-Osa Monitor</strong>
+        <span>Eti-Osa LGA, Lagos</span>
       </div>
     </a>
 
@@ -83,13 +83,13 @@
   </nav>
 
   <!-- ── Map comparison area ─────────────────── -->
-  <div id="comparison-wrapper" role="main" aria-label="Coastal change comparison map">
+  <div id="comparison-wrapper" role="main" aria-label="Eti-Osa coastal change comparison map">
 
-    <!-- 2020 classification (bottom, full-width) -->
-    <div id="map-before" aria-label="2020 coastal classification map"></div>
+    <!-- Left classification (bottom, full-width) -->
+    <div id="map-before" aria-label="Left map — Eti-Osa coastal classification"></div>
 
-    <!-- 2025 classification (top, clipped from left by swipe handle) -->
-    <div id="map-after" aria-label="2025 coastal classification map"></div>
+    <!-- Right classification (top, clipped from left by swipe handle) -->
+    <div id="map-after" aria-label="Right map — Eti-Osa coastal classification"></div>
 
     <!-- ── Swipe divider ────────────────────── -->
     <div id="swipe-handle" aria-label="Swipe to compare years" role="slider"
@@ -197,7 +197,7 @@
           <path d="M8 1V3M8 13V15M1 8H3M13 8H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
           <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
         </svg>
-        Zoom to Lagos area
+        Zoom to Eti-Osa area
       </button>
     </div>
 
