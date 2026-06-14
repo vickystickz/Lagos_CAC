@@ -14,6 +14,7 @@
 
 import { initMaps, getMaps } from "./map.js";
 import { loadAllRasters, onStatsReady, reattachLayers } from "./raster.js";
+import { initBoundaries, reattachBoundaries } from "./boundaries.js";
 import { initSwipe } from "./swipe.js";
 import { initLegend } from "./legend.js";
 import { initControls, updateStats } from "./controls.js";
@@ -52,10 +53,13 @@ async function main() {
   // 7. Load COG layers (async – demo placeholders render immediately)
   await loadAllRasters(mapBefore, mapAfter);
 
-  // 8. Re-attach raster layers after basemap style changes.
+  // 8. Load boundary overlays on top of rasters
+  await initBoundaries(mapBefore, mapAfter);
+
+  // 9. Re-attach rasters then boundaries after basemap style changes.
   // "style.load" fires once per setStyle() call, after the style is fully parsed.
-  mapBefore.on("style.load", () => reattachLayers(mapBefore, mapAfter));
-  mapAfter.on("style.load",  () => reattachLayers(mapBefore, mapAfter));
+  mapBefore.on("style.load", () => { reattachLayers(mapBefore, mapAfter); reattachBoundaries(); });
+  mapAfter.on("style.load",  () => { reattachLayers(mapBefore, mapAfter); reattachBoundaries(); });
 }
 
 // Resolves when the map's initial style has loaded

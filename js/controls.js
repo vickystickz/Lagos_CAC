@@ -10,6 +10,7 @@
  */
 
 import { setLayerVisible, swapYear } from "./raster.js";
+import { setBoundaryVisible } from "./boundaries.js";
 import { setBasemap, flyToLagos, getMaps } from "./map.js";
 import { resetSwipe } from "./swipe.js";
 import { LYR_BEFORE, LYR_AFTER, PALETTE, YEARS,
@@ -168,6 +169,13 @@ function _bindLayerToggles() {
     state.layerVisible.after = e.target.checked;
     const { mapAfter } = getMaps();
     setLayerVisible(mapAfter, LYR_AFTER, state.layerVisible.after);
+  });
+
+  // Boundary layer toggles (applied to both maps simultaneously)
+  document.querySelectorAll("[data-boundary]").forEach(cb => {
+    cb.addEventListener("change", e => {
+      setBoundaryVisible(e.target.dataset.boundary, e.target.checked);
+    });
   });
 }
 
